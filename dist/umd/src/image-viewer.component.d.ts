@@ -2,18 +2,12 @@ import { DomController, NavController, NavParams, Ion, GestureController, Config
 import { AfterViewInit, ElementRef, NgZone, OnDestroy, OnInit, Renderer } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { SocialSharing } from '@ionic-native/social-sharing';
-import { FileTransfer } from '@ionic-native/file-transfer';
-import { File } from '@ionic-native/file';
 import { LocalNotifications } from '@ionic-native/local-notifications';
-import { Base64 } from '@ionic-native/base64';
 import { Base64ToGallery } from '@ionic-native/base64-to-gallery';
 import { ImageViewerTransitionGesture } from './image-viewer-transition-gesture';
 export declare class ImageViewerComponent extends Ion implements OnInit, OnDestroy, AfterViewInit {
     private base64ToGallery;
-    private base64;
     private localNotifications;
-    private transfer;
-    private file;
     private socialSharing;
     _gestureCtrl: GestureController;
     elementRef: ElementRef;
@@ -32,7 +26,7 @@ export declare class ImageViewerComponent extends Ion implements OnInit, OnDestr
     private pinchGesture;
     isZoomed: boolean;
     private unregisterBackButton;
-    constructor(base64ToGallery: Base64ToGallery, base64: Base64, localNotifications: LocalNotifications, transfer: FileTransfer, file: File, socialSharing: SocialSharing, _gestureCtrl: GestureController, elementRef: ElementRef, _nav: NavController, _zone: NgZone, renderer: Renderer, domCtrl: DomController, platform: Platform, _navParams: NavParams, _config: Config, _sanitizer: DomSanitizer);
+    constructor(base64ToGallery: Base64ToGallery, localNotifications: LocalNotifications, socialSharing: SocialSharing, _gestureCtrl: GestureController, elementRef: ElementRef, _nav: NavController, _zone: NgZone, renderer: Renderer, domCtrl: DomController, platform: Platform, _navParams: NavParams, _config: Config, _sanitizer: DomSanitizer);
     updateImageSrc(src: any): void;
     updateImageSrcWithTransition(src: any): void;
     ngOnInit(): void;

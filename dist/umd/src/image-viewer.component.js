@@ -14,7 +14,7 @@ var __extends = (this && this.__extends) || (function () {
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "ionic-angular", "@angular/core", "@angular/platform-browser", "@ionic-native/social-sharing", "@ionic-native/file-transfer", "@ionic-native/file", "@ionic-native/local-notifications", "@ionic-native/base64", "@ionic-native/base64-to-gallery", "./image-viewer-src-animation", "./image-viewer-transition-gesture", "./image-viewer-zoom-gesture"], factory);
+        define(["require", "exports", "ionic-angular", "@angular/core", "@angular/platform-browser", "@ionic-native/social-sharing", "@ionic-native/local-notifications", "@ionic-native/base64-to-gallery", "./image-viewer-src-animation", "./image-viewer-transition-gesture", "./image-viewer-zoom-gesture"], factory);
     }
 })(function (require, exports) {
     "use strict";
@@ -23,23 +23,17 @@ var __extends = (this && this.__extends) || (function () {
     var core_1 = require("@angular/core");
     var platform_browser_1 = require("@angular/platform-browser");
     var social_sharing_1 = require("@ionic-native/social-sharing");
-    var file_transfer_1 = require("@ionic-native/file-transfer");
-    var file_1 = require("@ionic-native/file");
     var local_notifications_1 = require("@ionic-native/local-notifications");
-    var base64_1 = require("@ionic-native/base64");
     var base64_to_gallery_1 = require("@ionic-native/base64-to-gallery");
     var image_viewer_src_animation_1 = require("./image-viewer-src-animation");
     var image_viewer_transition_gesture_1 = require("./image-viewer-transition-gesture");
     var image_viewer_zoom_gesture_1 = require("./image-viewer-zoom-gesture");
     var ImageViewerComponent = (function (_super) {
         __extends(ImageViewerComponent, _super);
-        function ImageViewerComponent(base64ToGallery, base64, localNotifications, transfer, file, socialSharing, _gestureCtrl, elementRef, _nav, _zone, renderer, domCtrl, platform, _navParams, _config, _sanitizer) {
+        function ImageViewerComponent(base64ToGallery, localNotifications, socialSharing, _gestureCtrl, elementRef, _nav, _zone, renderer, domCtrl, platform, _navParams, _config, _sanitizer) {
             var _this = _super.call(this, _config, elementRef, renderer) || this;
             _this.base64ToGallery = base64ToGallery;
-            _this.base64 = base64;
             _this.localNotifications = localNotifications;
-            _this.transfer = transfer;
-            _this.file = file;
             _this.socialSharing = socialSharing;
             _this._gestureCtrl = _gestureCtrl;
             _this.elementRef = elementRef;
@@ -149,7 +143,8 @@ var __extends = (this && this.__extends) || (function () {
                 xhr.responseType = 'blob';
                 xhr.send();
             };
-            toDataURL(this.rawUrl, function (dataUrl) {
+            var img = this.rawUrl.replace('https://steemitimages.com/0x0/', '');
+            toDataURL(img, function (dataUrl) {
                 // Declare the options of B64 TO GALLERY.
                 var options = { prefix: '_img', mediaScanner: true };
                 // Save the image to the gallery/image roll.
@@ -162,38 +157,6 @@ var __extends = (this && this.__extends) || (function () {
                     deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
                 });
             });
-            // const fileTransfer: FileTransferObject = this.transfer.create();
-            // fileTransfer.download(encodeURI(this.rawUrl), this.file.dataDirectory + makeid() + '.jpg').then((entry) => {
-            // 	// Encode the path in base64 to save it into the gallery.
-            // 	alert(entry.toURL());
-            // 	alert(entry);
-            // 	this.base64.encodeFile(entry.toURL()).then((base64File: string) => {
-            // 		alert(base64File)
-            // 		// Declare the options of B64 TO GALLERY.
-            // 		const options: Base64ToGalleryOptions = { prefix: '_img', mediaScanner: true };
-            // 		// Save the image to the gallery/image roll.
-            // 		this.base64ToGallery.base64ToGallery(base64File, options).then(
-            // 			res => {
-            // 				// Deliver a local notification when the image is downloaded completely.
-            // 				deliverNotification(1, 'Image downloaded and saved to gallery correctly 😏');
-            // 			},
-            // 			err => {
-            // 				alert(err);
-            // 				// Deliver a local notification when the image download fail.
-            // 				deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
-            // 			}
-            // 		);
-            // 	}, (err) => {
-            // 		alert(err);
-            // 		// Deliver a local notification when the image download fail.
-            // 		deliverNotification(3, 'The image could not be downloaded. Please try again. 😢');
-            // 	});
-            // 	// console.log('download complete: ' + entry.toURL());
-            // }, (error) => {
-            // 	alert(error);
-            // 	// Deliver a local notification when the image download fail.
-            // 	deliverNotification(4, 'The image could not be downloaded. Please try again. 😢');
-            // });
         };
         ImageViewerComponent.decorators = [
             { type: core_1.Component, args: [{
@@ -206,10 +169,7 @@ var __extends = (this && this.__extends) || (function () {
         /** @nocollapse */
         ImageViewerComponent.ctorParameters = function () { return [
             { type: base64_to_gallery_1.Base64ToGallery, },
-            { type: base64_1.Base64, },
             { type: local_notifications_1.LocalNotifications, },
-            { type: file_transfer_1.FileTransfer, },
-            { type: file_1.File, },
             { type: social_sharing_1.SocialSharing, },
             { type: ionic_angular_1.GestureController, },
             { type: core_1.ElementRef, },

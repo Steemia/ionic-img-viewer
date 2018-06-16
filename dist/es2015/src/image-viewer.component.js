@@ -12,23 +12,17 @@ import { DomController, NavController, NavParams, Ion, GestureController, Config
 import { Component, ElementRef, NgZone, Renderer, ViewChild, ViewEncapsulation, } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SocialSharing } from '@ionic-native/social-sharing';
-import { FileTransfer } from '@ionic-native/file-transfer';
-import { File } from '@ionic-native/file';
 import { LocalNotifications } from '@ionic-native/local-notifications';
-import { Base64 } from '@ionic-native/base64';
 import { Base64ToGallery } from '@ionic-native/base64-to-gallery';
 import { ImageViewerSrcAnimation } from './image-viewer-src-animation';
 import { ImageViewerTransitionGesture } from './image-viewer-transition-gesture';
 import { ImageViewerZoomGesture } from './image-viewer-zoom-gesture';
 var ImageViewerComponent = (function (_super) {
     __extends(ImageViewerComponent, _super);
-    function ImageViewerComponent(base64ToGallery, base64, localNotifications, transfer, file, socialSharing, _gestureCtrl, elementRef, _nav, _zone, renderer, domCtrl, platform, _navParams, _config, _sanitizer) {
+    function ImageViewerComponent(base64ToGallery, localNotifications, socialSharing, _gestureCtrl, elementRef, _nav, _zone, renderer, domCtrl, platform, _navParams, _config, _sanitizer) {
         var _this = _super.call(this, _config, elementRef, renderer) || this;
         _this.base64ToGallery = base64ToGallery;
-        _this.base64 = base64;
         _this.localNotifications = localNotifications;
-        _this.transfer = transfer;
-        _this.file = file;
         _this.socialSharing = socialSharing;
         _this._gestureCtrl = _gestureCtrl;
         _this.elementRef = elementRef;
@@ -138,7 +132,8 @@ var ImageViewerComponent = (function (_super) {
             xhr.responseType = 'blob';
             xhr.send();
         };
-        toDataURL(this.rawUrl, function (dataUrl) {
+        var img = this.rawUrl.replace('https://steemitimages.com/0x0/', '');
+        toDataURL(img, function (dataUrl) {
             // Declare the options of B64 TO GALLERY.
             var options = { prefix: '_img', mediaScanner: true };
             // Save the image to the gallery/image roll.
@@ -151,38 +146,6 @@ var ImageViewerComponent = (function (_super) {
                 deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
             });
         });
-        // const fileTransfer: FileTransferObject = this.transfer.create();
-        // fileTransfer.download(encodeURI(this.rawUrl), this.file.dataDirectory + makeid() + '.jpg').then((entry) => {
-        // 	// Encode the path in base64 to save it into the gallery.
-        // 	alert(entry.toURL());
-        // 	alert(entry);
-        // 	this.base64.encodeFile(entry.toURL()).then((base64File: string) => {
-        // 		alert(base64File)
-        // 		// Declare the options of B64 TO GALLERY.
-        // 		const options: Base64ToGalleryOptions = { prefix: '_img', mediaScanner: true };
-        // 		// Save the image to the gallery/image roll.
-        // 		this.base64ToGallery.base64ToGallery(base64File, options).then(
-        // 			res => {
-        // 				// Deliver a local notification when the image is downloaded completely.
-        // 				deliverNotification(1, 'Image downloaded and saved to gallery correctly 😏');
-        // 			},
-        // 			err => {
-        // 				alert(err);
-        // 				// Deliver a local notification when the image download fail.
-        // 				deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
-        // 			}
-        // 		);
-        // 	}, (err) => {
-        // 		alert(err);
-        // 		// Deliver a local notification when the image download fail.
-        // 		deliverNotification(3, 'The image could not be downloaded. Please try again. 😢');
-        // 	});
-        // 	// console.log('download complete: ' + entry.toURL());
-        // }, (error) => {
-        // 	alert(error);
-        // 	// Deliver a local notification when the image download fail.
-        // 	deliverNotification(4, 'The image could not be downloaded. Please try again. 😢');
-        // });
     };
     ImageViewerComponent.decorators = [
         { type: Component, args: [{
@@ -195,10 +158,7 @@ var ImageViewerComponent = (function (_super) {
     /** @nocollapse */
     ImageViewerComponent.ctorParameters = function () { return [
         { type: Base64ToGallery, },
-        { type: Base64, },
         { type: LocalNotifications, },
-        { type: FileTransfer, },
-        { type: File, },
         { type: SocialSharing, },
         { type: GestureController, },
         { type: ElementRef, },
