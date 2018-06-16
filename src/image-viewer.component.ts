@@ -25,7 +25,9 @@ import {
 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { SocialSharing } from '@ionic-native/social-sharing';
-
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
+import { File } from '@ionic-native/file';
+import { LocalNotifications } from '@ionic-native/local-notifications';
 
 import { ImageViewerSrcAnimation } from './image-viewer-src-animation';
 import { ImageViewerTransitionGesture } from './image-viewer-transition-gesture';
@@ -38,7 +40,7 @@ import { ImageViewerEnter, ImageViewerLeave } from './image-viewer-transitions';
 		<ion-header no-border>
 			<ion-navbar>
 				<ion-buttons end>
-					<button ion-button icon-only>
+					<button ion-button icon-only (click)="downloadImg();">
 						<ion-icon name="download"></ion-icon>
 					</button>
 					<button ion-button icon-only (click)="socialShare();">
@@ -75,6 +77,9 @@ export class ImageViewerComponent extends Ion implements OnInit, OnDestroy, Afte
 	private unregisterBackButton: Function;
 
 	constructor(
+		private localNotifications: LocalNotifications,
+		private transfer: FileTransfer,
+		private file: File,
 		private socialSharing: SocialSharing,
 		public _gestureCtrl: GestureController,
 		public elementRef: ElementRef,
@@ -142,6 +147,37 @@ export class ImageViewerComponent extends Ion implements OnInit, OnDestroy, Afte
 			// Sharing via email is possible
 		}).catch(() => {
 			// Sharing via email is not possible
+		});
+	}
+
+	/**
+	 * Download opened image to user device
+	 * @author Jayser Mendez.
+	 */
+	downloadImg(): void {
+
+		// Function to generate random name for the image
+		const makeid = () => {
+			var text = "";
+			var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+			for (var i = 0; i < 15; i++)
+				text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+			return text;
+		};
+
+		const fileTransfer: FileTransferObject = this.transfer.create();
+
+		fileTransfer.download(encodeURI(this.rawUrl), this.file.dataDirectory + makeid() + '.jpg').then((entry) => {
+			// Deliver a local notification when the image is downloaded completely.
+			this.localNotifications.schedule({
+				id: 1,
+				text: 'Image downloaded correctly 😏',
+			});
+			// console.log('download complete: ' + entry.toURL());
+		}, (error) => {
+			// handle error
 		});
 
 	}

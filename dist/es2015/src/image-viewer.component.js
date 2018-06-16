@@ -12,13 +12,19 @@ import { DomController, NavController, NavParams, Ion, GestureController, Config
 import { Component, ElementRef, NgZone, Renderer, ViewChild, ViewEncapsulation, } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SocialSharing } from '@ionic-native/social-sharing';
+import { FileTransfer } from '@ionic-native/file-transfer';
+import { File } from '@ionic-native/file';
+import { LocalNotifications } from '@ionic-native/local-notifications';
 import { ImageViewerSrcAnimation } from './image-viewer-src-animation';
 import { ImageViewerTransitionGesture } from './image-viewer-transition-gesture';
 import { ImageViewerZoomGesture } from './image-viewer-zoom-gesture';
 var ImageViewerComponent = (function (_super) {
     __extends(ImageViewerComponent, _super);
-    function ImageViewerComponent(socialSharing, _gestureCtrl, elementRef, _nav, _zone, renderer, domCtrl, platform, _navParams, _config, _sanitizer) {
+    function ImageViewerComponent(localNotifications, transfer, file, socialSharing, _gestureCtrl, elementRef, _nav, _zone, renderer, domCtrl, platform, _navParams, _config, _sanitizer) {
         var _this = _super.call(this, _config, elementRef, renderer) || this;
+        _this.localNotifications = localNotifications;
+        _this.transfer = transfer;
+        _this.file = file;
         _this.socialSharing = socialSharing;
         _this._gestureCtrl = _gestureCtrl;
         _this.elementRef = elementRef;
@@ -84,16 +90,54 @@ var ImageViewerComponent = (function (_super) {
             // Sharing via email is not possible
         });
     };
+    /**
+     * Download opened image to user device
+     * @author Jayser Mendez.
+     */
+    /**
+         * Download opened image to user device
+         * @author Jayser Mendez.
+         */
+    ImageViewerComponent.prototype.downloadImg = /**
+         * Download opened image to user device
+         * @author Jayser Mendez.
+         */
+    function () {
+        var _this = this;
+        // Function to generate random name for the image
+        var makeid = function () {
+            var text = "";
+            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            for (var i = 0; i < 15; i++)
+                text += possible.charAt(Math.floor(Math.random() * possible.length));
+            return text;
+        };
+        var fileTransfer = this.transfer.create();
+        fileTransfer.download(encodeURI(this.rawUrl), this.file.dataDirectory + makeid() + '.jpg').then(function (entry) {
+            // Deliver a local notification when the image is downloaded completely.
+            // Deliver a local notification when the image is downloaded completely.
+            _this.localNotifications.schedule({
+                id: 1,
+                text: 'Image downloaded correctly 😏',
+            });
+            // console.log('download complete: ' + entry.toURL());
+        }, function (error) {
+            // handle error
+        });
+    };
     ImageViewerComponent.decorators = [
         { type: Component, args: [{
                     selector: 'image-viewer',
-                    template: "\n\t\t<ion-header no-border>\n\t\t\t<ion-navbar>\n\t\t\t\t<ion-buttons end>\n\t\t\t\t\t<button ion-button icon-only>\n\t\t\t\t\t\t<ion-icon name=\"download\"></ion-icon>\n\t\t\t\t\t</button>\n\t\t\t\t\t<button ion-button icon-only (click)=\"socialShare();\">\n\t\t\t\t\t\t<ion-icon name=\"share\"></ion-icon>              \n\t\t\t\t\t</button>\n\t\t\t\t</ion-buttons>\n\t\t\t</ion-navbar>\n\t\t</ion-header>\n\n\t\t<ion-backdrop (click)=\"bdClick()\"></ion-backdrop>\n\n\t\t<div class=\"image-wrapper\">\n\t\t\t<div class=\"image\" #imageContainer>\n\t\t\t\t<img [src]=\"imageUrl\" tappable #image />\n\t\t\t</div>\n\t\t</div>\n\t",
+                    template: "\n\t\t<ion-header no-border>\n\t\t\t<ion-navbar>\n\t\t\t\t<ion-buttons end>\n\t\t\t\t\t<button ion-button icon-only (click)=\"downloadImg();\">\n\t\t\t\t\t\t<ion-icon name=\"download\"></ion-icon>\n\t\t\t\t\t</button>\n\t\t\t\t\t<button ion-button icon-only (click)=\"socialShare();\">\n\t\t\t\t\t\t<ion-icon name=\"share\"></ion-icon>              \n\t\t\t\t\t</button>\n\t\t\t\t</ion-buttons>\n\t\t\t</ion-navbar>\n\t\t</ion-header>\n\n\t\t<ion-backdrop (click)=\"bdClick()\"></ion-backdrop>\n\n\t\t<div class=\"image-wrapper\">\n\t\t\t<div class=\"image\" #imageContainer>\n\t\t\t\t<img [src]=\"imageUrl\" tappable #image />\n\t\t\t</div>\n\t\t</div>\n\t",
                     styles: ['image-viewer.ion-page { position: absolute; top: 0; right: 0; bottom: 0; left: 0; display: flex; flex-direction: column; height: 100%; opacity: 1; } image-viewer.ion-page ion-navbar.toolbar .toolbar-background { background-color: transparent; } image-viewer.ion-page ion-navbar.toolbar.toolbar-ios { padding-top: calc(20px + 4px); } image-viewer.ion-page ion-navbar .bar-button-default { color: white; } image-viewer.ion-page .backdrop { will-change: opacity; } image-viewer.ion-page .image-wrapper { position: relative; z-index: 10; display: flex; overflow: hidden; flex-direction: column; pointer-events: none; margin-top: 56px; flex-grow: 1; justify-content: center; } image-viewer.ion-page .image { will-change: transform; } image-viewer.ion-page img { display: block; pointer-events: auto; max-width: 100%; max-height: 100vh; margin: 0 auto; } '],
                     encapsulation: ViewEncapsulation.None
                 },] },
     ];
     /** @nocollapse */
     ImageViewerComponent.ctorParameters = function () { return [
+        { type: LocalNotifications, },
+        { type: FileTransfer, },
+        { type: File, },
         { type: SocialSharing, },
         { type: GestureController, },
         { type: ElementRef, },
