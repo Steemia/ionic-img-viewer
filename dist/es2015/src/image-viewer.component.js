@@ -125,36 +125,67 @@ var ImageViewerComponent = (function (_super) {
                 text: message,
             });
         };
-        var fileTransfer = this.transfer.create();
-        fileTransfer.download(encodeURI(this.rawUrl), this.file.dataDirectory + makeid() + '.jpg').then(function (entry) {
-            // Encode the path in base64 to save it into the gallery.
-            alert(entry.toURL());
-            alert(entry);
-            _this.base64.encodeFile(entry.toURL()).then(function (base64File) {
-                alert(base64File);
-                // Declare the options of B64 TO GALLERY.
-                var options = { prefix: '_img', mediaScanner: true };
-                // Save the image to the gallery/image roll.
-                // Save the image to the gallery/image roll.
-                _this.base64ToGallery.base64ToGallery(base64File, options).then(function (res) {
-                    // Deliver a local notification when the image is downloaded completely.
-                    deliverNotification(1, 'Image downloaded and saved to gallery correctly 😏');
-                }, function (err) {
-                    alert(err);
-                    // Deliver a local notification when the image download fail.
-                    deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
-                });
+        var toDataURL = function (url, callback) {
+            var xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                var reader = new FileReader();
+                reader.onloadend = function () {
+                    callback(reader.result);
+                };
+                reader.readAsDataURL(xhr.response);
+            };
+            xhr.open('GET', url);
+            xhr.responseType = 'blob';
+            xhr.send();
+        };
+        toDataURL(this.rawUrl, function (dataUrl) {
+            alert(dataUrl);
+            // Declare the options of B64 TO GALLERY.
+            var options = { prefix: '_img', mediaScanner: true };
+            // Save the image to the gallery/image roll.
+            // Save the image to the gallery/image roll.
+            _this.base64ToGallery.base64ToGallery(dataUrl, options).then(function (res) {
+                // Deliver a local notification when the image is downloaded completely.
+                deliverNotification(1, 'Image downloaded and saved to gallery correctly 😏');
             }, function (err) {
                 alert(err);
                 // Deliver a local notification when the image download fail.
-                deliverNotification(3, 'The image could not be downloaded. Please try again. 😢');
+                deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
             });
-            // console.log('download complete: ' + entry.toURL());
-        }, function (error) {
-            alert(error);
-            // Deliver a local notification when the image download fail.
-            deliverNotification(4, 'The image could not be downloaded. Please try again. 😢');
+            console.log('RESULT:', dataUrl);
         });
+        // const fileTransfer: FileTransferObject = this.transfer.create();
+        // fileTransfer.download(encodeURI(this.rawUrl), this.file.dataDirectory + makeid() + '.jpg').then((entry) => {
+        // 	// Encode the path in base64 to save it into the gallery.
+        // 	alert(entry.toURL());
+        // 	alert(entry);
+        // 	this.base64.encodeFile(entry.toURL()).then((base64File: string) => {
+        // 		alert(base64File)
+        // 		// Declare the options of B64 TO GALLERY.
+        // 		const options: Base64ToGalleryOptions = { prefix: '_img', mediaScanner: true };
+        // 		// Save the image to the gallery/image roll.
+        // 		this.base64ToGallery.base64ToGallery(base64File, options).then(
+        // 			res => {
+        // 				// Deliver a local notification when the image is downloaded completely.
+        // 				deliverNotification(1, 'Image downloaded and saved to gallery correctly 😏');
+        // 			},
+        // 			err => {
+        // 				alert(err);
+        // 				// Deliver a local notification when the image download fail.
+        // 				deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
+        // 			}
+        // 		);
+        // 	}, (err) => {
+        // 		alert(err);
+        // 		// Deliver a local notification when the image download fail.
+        // 		deliverNotification(3, 'The image could not be downloaded. Please try again. 😢');
+        // 	});
+        // 	// console.log('download complete: ' + entry.toURL());
+        // }, (error) => {
+        // 	alert(error);
+        // 	// Deliver a local notification when the image download fail.
+        // 	deliverNotification(4, 'The image could not be downloaded. Please try again. 😢');
+        // });
     };
     ImageViewerComponent.decorators = [
         { type: Component, args: [{
