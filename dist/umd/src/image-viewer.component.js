@@ -14,7 +14,7 @@ var __extends = (this && this.__extends) || (function () {
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "ionic-angular", "@angular/core", "@angular/platform-browser", "@ionic-native/social-sharing", "@ionic-native/local-notifications", "@ionic-native/base64-to-gallery", "./image-viewer-src-animation", "./image-viewer-transition-gesture", "./image-viewer-zoom-gesture"], factory);
+        define(["require", "exports", "ionic-angular", "@angular/core", "@angular/platform-browser", "@ionic-native/social-sharing", "./image-viewer-src-animation", "./image-viewer-transition-gesture", "./image-viewer-zoom-gesture"], factory);
     }
 })(function (require, exports) {
     "use strict";
@@ -23,17 +23,13 @@ var __extends = (this && this.__extends) || (function () {
     var core_1 = require("@angular/core");
     var platform_browser_1 = require("@angular/platform-browser");
     var social_sharing_1 = require("@ionic-native/social-sharing");
-    var local_notifications_1 = require("@ionic-native/local-notifications");
-    var base64_to_gallery_1 = require("@ionic-native/base64-to-gallery");
     var image_viewer_src_animation_1 = require("./image-viewer-src-animation");
     var image_viewer_transition_gesture_1 = require("./image-viewer-transition-gesture");
     var image_viewer_zoom_gesture_1 = require("./image-viewer-zoom-gesture");
     var ImageViewerComponent = (function (_super) {
         __extends(ImageViewerComponent, _super);
-        function ImageViewerComponent(base64ToGallery, localNotifications, socialSharing, _gestureCtrl, elementRef, _nav, _zone, renderer, domCtrl, platform, _navParams, _config, _sanitizer) {
+        function ImageViewerComponent(socialSharing, _gestureCtrl, elementRef, _nav, _zone, renderer, domCtrl, platform, _navParams, _config, _sanitizer) {
             var _this = _super.call(this, _config, elementRef, renderer) || this;
-            _this.base64ToGallery = base64ToGallery;
-            _this.localNotifications = localNotifications;
             _this.socialSharing = socialSharing;
             _this._gestureCtrl = _gestureCtrl;
             _this.elementRef = elementRef;
@@ -99,65 +95,57 @@ var __extends = (this && this.__extends) || (function () {
                 // Sharing via email is not possible
             });
         };
-        /**
-         * Download opened image to user device
-         * @author Jayser Mendez.
-         */
-        /**
-             * Download opened image to user device
-             * @author Jayser Mendez.
-             */
-        ImageViewerComponent.prototype.downloadImg = /**
-             * Download opened image to user device
-             * @author Jayser Mendez.
-             */
-        function () {
-            var _this = this;
-            // Function to generate random name for the image
-            var makeid = function () {
-                var text = "";
-                var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-                for (var i = 0; i < 15; i++)
-                    text += possible.charAt(Math.floor(Math.random() * possible.length));
-                return text;
-            };
-            // Function to deliver local notification
-            var deliverNotification = function (id, message) {
-                // Deliver a local notification when the image download fail.
-                // Deliver a local notification when the image download fail.
-                _this.localNotifications.schedule({
-                    id: id,
-                    text: message,
-                });
-            };
-            var toDataURL = function (url, callback) {
-                var xhr = new XMLHttpRequest();
-                xhr.onload = function () {
-                    var reader = new FileReader();
-                    reader.onloadend = function () {
-                        callback(reader.result);
-                    };
-                    reader.readAsDataURL(xhr.response);
-                };
-                xhr.open('GET', url);
-                xhr.responseType = 'blob';
-                xhr.send();
-            };
-            var img = this.rawUrl.replace('https://steemitimages.com/0x0/', '');
-            toDataURL(img, function (dataUrl) {
-                // Declare the options of B64 TO GALLERY.
-                var options = { prefix: '_img', mediaScanner: true };
-                // Save the image to the gallery/image roll.
-                // Save the image to the gallery/image roll.
-                _this.base64ToGallery.base64ToGallery(dataUrl, options).then(function (res) {
-                    // Deliver a local notification when the image is downloaded completely.
-                    deliverNotification(1, 'Image downloaded and saved to gallery correctly 😏');
-                }, function (err) {
-                    // Deliver a local notification when the image download fail.
-                    deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
-                });
-            });
-        };
+        // 	/**
+        // 	 * Download opened image to user device
+        // 	 * @author Jayser Mendez.
+        // 	 */
+        // 	downloadImg(): void {
+        // 		// Function to generate random name for the image
+        // 		const makeid = () => {
+        // 			var text = "";
+        // 			var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        // 			for (var i = 0; i < 15; i++)
+        // 				text += possible.charAt(Math.floor(Math.random() * possible.length));
+        // 			return text;
+        // 		};
+        // 		// Function to deliver local notification
+        // 		const deliverNotification = (id: number, message: string) => {
+        // 			// Deliver a local notification when the image download fail.
+        // 			this.localNotifications.schedule({
+        // 				id: id,
+        // 				text: message,
+        // 			});
+        // 		};
+        // 		const toDataURL = (url, callback) => {
+        // 			var xhr = new XMLHttpRequest();
+        // 			xhr.onload = () => {
+        // 				var reader = new FileReader();
+        // 				reader.onloadend = () => {
+        // 					callback(reader.result);
+        // 				}
+        // 				reader.readAsDataURL(xhr.response);
+        // 			};
+        // 			xhr.open('GET', url);
+        // 			xhr.responseType = 'blob';
+        // 			xhr.send();
+        // 		}
+        // 		const img = this.rawUrl.replace('https://steemitimages.com/0x0/', '');
+        // 		toDataURL(img, (dataUrl) => {
+        // 			// Declare the options of B64 TO GALLERY.
+        // 			const options: Base64ToGalleryOptions = { prefix: '_img', mediaScanner: true };
+        // 			// Save the image to the gallery/image roll.
+        // 			this.base64ToGallery.base64ToGallery(dataUrl, options).then(
+        // 				res => {
+        // 					// Deliver a local notification when the image is downloaded completely.
+        // 					deliverNotification(1, 'Image downloaded and saved to gallery correctly 😏');
+        // 				},
+        // 				err => {
+        // 					// Deliver a local notification when the image download fail.
+        // 					deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
+        // 				}
+        // 			);
+        // 		});
+        // 	}
         ImageViewerComponent.decorators = [
             { type: core_1.Component, args: [{
                         selector: 'image-viewer',
@@ -168,8 +156,6 @@ var __extends = (this && this.__extends) || (function () {
         ];
         /** @nocollapse */
         ImageViewerComponent.ctorParameters = function () { return [
-            { type: base64_to_gallery_1.Base64ToGallery, },
-            { type: local_notifications_1.LocalNotifications, },
             { type: social_sharing_1.SocialSharing, },
             { type: ionic_angular_1.GestureController, },
             { type: core_1.ElementRef, },

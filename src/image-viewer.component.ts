@@ -25,8 +25,6 @@ import {
 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { SocialSharing } from '@ionic-native/social-sharing';
-import { LocalNotifications } from '@ionic-native/local-notifications';
-import { Base64ToGallery, Base64ToGalleryOptions } from '@ionic-native/base64-to-gallery';
 
 import { ImageViewerSrcAnimation } from './image-viewer-src-animation';
 import { ImageViewerTransitionGesture } from './image-viewer-transition-gesture';
@@ -76,8 +74,6 @@ export class ImageViewerComponent extends Ion implements OnInit, OnDestroy, Afte
 	private unregisterBackButton: Function;
 
 	constructor(
-		private base64ToGallery: Base64ToGallery,
-		private localNotifications: LocalNotifications,
 		private socialSharing: SocialSharing,
 		public _gestureCtrl: GestureController,
 		public elementRef: ElementRef,
@@ -148,65 +144,65 @@ export class ImageViewerComponent extends Ion implements OnInit, OnDestroy, Afte
 		});
 	}
 
-	/**
-	 * Download opened image to user device
-	 * @author Jayser Mendez.
-	 */
-	downloadImg(): void {
+// 	/**
+// 	 * Download opened image to user device
+// 	 * @author Jayser Mendez.
+// 	 */
+// 	downloadImg(): void {
 
-		// Function to generate random name for the image
-		const makeid = () => {
-			var text = "";
-			var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+// 		// Function to generate random name for the image
+// 		const makeid = () => {
+// 			var text = "";
+// 			var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-			for (var i = 0; i < 15; i++)
-				text += possible.charAt(Math.floor(Math.random() * possible.length));
+// 			for (var i = 0; i < 15; i++)
+// 				text += possible.charAt(Math.floor(Math.random() * possible.length));
 
-			return text;
-		};
+// 			return text;
+// 		};
 
-		// Function to deliver local notification
-		const deliverNotification = (id: number, message: string) => {
-			// Deliver a local notification when the image download fail.
-			this.localNotifications.schedule({
-				id: id,
-				text: message,
-			});
-		};
+// 		// Function to deliver local notification
+// 		const deliverNotification = (id: number, message: string) => {
+// 			// Deliver a local notification when the image download fail.
+// 			this.localNotifications.schedule({
+// 				id: id,
+// 				text: message,
+// 			});
+// 		};
 
-		const toDataURL = (url, callback) => {
-			var xhr = new XMLHttpRequest();
-			xhr.onload = () => {
-				var reader = new FileReader();
-				reader.onloadend = () => {
-					callback(reader.result);
-				}
-				reader.readAsDataURL(xhr.response);
-			};
-			xhr.open('GET', url);
-			xhr.responseType = 'blob';
-			xhr.send();
-		}
+// 		const toDataURL = (url, callback) => {
+// 			var xhr = new XMLHttpRequest();
+// 			xhr.onload = () => {
+// 				var reader = new FileReader();
+// 				reader.onloadend = () => {
+// 					callback(reader.result);
+// 				}
+// 				reader.readAsDataURL(xhr.response);
+// 			};
+// 			xhr.open('GET', url);
+// 			xhr.responseType = 'blob';
+// 			xhr.send();
+// 		}
 
-		const img = this.rawUrl.replace('https://steemitimages.com/0x0/', '');
+// 		const img = this.rawUrl.replace('https://steemitimages.com/0x0/', '');
 
-		toDataURL(img, (dataUrl) => {
-			// Declare the options of B64 TO GALLERY.
-			const options: Base64ToGalleryOptions = { prefix: '_img', mediaScanner: true };
+// 		toDataURL(img, (dataUrl) => {
+// 			// Declare the options of B64 TO GALLERY.
+// 			const options: Base64ToGalleryOptions = { prefix: '_img', mediaScanner: true };
 
-			// Save the image to the gallery/image roll.
-			this.base64ToGallery.base64ToGallery(dataUrl, options).then(
-				res => {
-					// Deliver a local notification when the image is downloaded completely.
-					deliverNotification(1, 'Image downloaded and saved to gallery correctly 😏');
-				},
-				err => {
-					// Deliver a local notification when the image download fail.
-					deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
-				}
-			);
-		});
+// 			// Save the image to the gallery/image roll.
+// 			this.base64ToGallery.base64ToGallery(dataUrl, options).then(
+// 				res => {
+// 					// Deliver a local notification when the image is downloaded completely.
+// 					deliverNotification(1, 'Image downloaded and saved to gallery correctly 😏');
+// 				},
+// 				err => {
+// 					// Deliver a local notification when the image download fail.
+// 					deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
+// 				}
+// 			);
+// 		});
 
 
-	}
+// 	}
 }

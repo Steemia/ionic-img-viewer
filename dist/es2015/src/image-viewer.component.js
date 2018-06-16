@@ -12,17 +12,13 @@ import { DomController, NavController, NavParams, Ion, GestureController, Config
 import { Component, ElementRef, NgZone, Renderer, ViewChild, ViewEncapsulation, } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SocialSharing } from '@ionic-native/social-sharing';
-import { LocalNotifications } from '@ionic-native/local-notifications';
-import { Base64ToGallery } from '@ionic-native/base64-to-gallery';
 import { ImageViewerSrcAnimation } from './image-viewer-src-animation';
 import { ImageViewerTransitionGesture } from './image-viewer-transition-gesture';
 import { ImageViewerZoomGesture } from './image-viewer-zoom-gesture';
 var ImageViewerComponent = (function (_super) {
     __extends(ImageViewerComponent, _super);
-    function ImageViewerComponent(base64ToGallery, localNotifications, socialSharing, _gestureCtrl, elementRef, _nav, _zone, renderer, domCtrl, platform, _navParams, _config, _sanitizer) {
+    function ImageViewerComponent(socialSharing, _gestureCtrl, elementRef, _nav, _zone, renderer, domCtrl, platform, _navParams, _config, _sanitizer) {
         var _this = _super.call(this, _config, elementRef, renderer) || this;
-        _this.base64ToGallery = base64ToGallery;
-        _this.localNotifications = localNotifications;
         _this.socialSharing = socialSharing;
         _this._gestureCtrl = _gestureCtrl;
         _this.elementRef = elementRef;
@@ -88,65 +84,57 @@ var ImageViewerComponent = (function (_super) {
             // Sharing via email is not possible
         });
     };
-    /**
-     * Download opened image to user device
-     * @author Jayser Mendez.
-     */
-    /**
-         * Download opened image to user device
-         * @author Jayser Mendez.
-         */
-    ImageViewerComponent.prototype.downloadImg = /**
-         * Download opened image to user device
-         * @author Jayser Mendez.
-         */
-    function () {
-        var _this = this;
-        // Function to generate random name for the image
-        var makeid = function () {
-            var text = "";
-            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            for (var i = 0; i < 15; i++)
-                text += possible.charAt(Math.floor(Math.random() * possible.length));
-            return text;
-        };
-        // Function to deliver local notification
-        var deliverNotification = function (id, message) {
-            // Deliver a local notification when the image download fail.
-            // Deliver a local notification when the image download fail.
-            _this.localNotifications.schedule({
-                id: id,
-                text: message,
-            });
-        };
-        var toDataURL = function (url, callback) {
-            var xhr = new XMLHttpRequest();
-            xhr.onload = function () {
-                var reader = new FileReader();
-                reader.onloadend = function () {
-                    callback(reader.result);
-                };
-                reader.readAsDataURL(xhr.response);
-            };
-            xhr.open('GET', url);
-            xhr.responseType = 'blob';
-            xhr.send();
-        };
-        var img = this.rawUrl.replace('https://steemitimages.com/0x0/', '');
-        toDataURL(img, function (dataUrl) {
-            // Declare the options of B64 TO GALLERY.
-            var options = { prefix: '_img', mediaScanner: true };
-            // Save the image to the gallery/image roll.
-            // Save the image to the gallery/image roll.
-            _this.base64ToGallery.base64ToGallery(dataUrl, options).then(function (res) {
-                // Deliver a local notification when the image is downloaded completely.
-                deliverNotification(1, 'Image downloaded and saved to gallery correctly 😏');
-            }, function (err) {
-                // Deliver a local notification when the image download fail.
-                deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
-            });
-        });
-    };
+    // 	/**
+    // 	 * Download opened image to user device
+    // 	 * @author Jayser Mendez.
+    // 	 */
+    // 	downloadImg(): void {
+    // 		// Function to generate random name for the image
+    // 		const makeid = () => {
+    // 			var text = "";
+    // 			var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    // 			for (var i = 0; i < 15; i++)
+    // 				text += possible.charAt(Math.floor(Math.random() * possible.length));
+    // 			return text;
+    // 		};
+    // 		// Function to deliver local notification
+    // 		const deliverNotification = (id: number, message: string) => {
+    // 			// Deliver a local notification when the image download fail.
+    // 			this.localNotifications.schedule({
+    // 				id: id,
+    // 				text: message,
+    // 			});
+    // 		};
+    // 		const toDataURL = (url, callback) => {
+    // 			var xhr = new XMLHttpRequest();
+    // 			xhr.onload = () => {
+    // 				var reader = new FileReader();
+    // 				reader.onloadend = () => {
+    // 					callback(reader.result);
+    // 				}
+    // 				reader.readAsDataURL(xhr.response);
+    // 			};
+    // 			xhr.open('GET', url);
+    // 			xhr.responseType = 'blob';
+    // 			xhr.send();
+    // 		}
+    // 		const img = this.rawUrl.replace('https://steemitimages.com/0x0/', '');
+    // 		toDataURL(img, (dataUrl) => {
+    // 			// Declare the options of B64 TO GALLERY.
+    // 			const options: Base64ToGalleryOptions = { prefix: '_img', mediaScanner: true };
+    // 			// Save the image to the gallery/image roll.
+    // 			this.base64ToGallery.base64ToGallery(dataUrl, options).then(
+    // 				res => {
+    // 					// Deliver a local notification when the image is downloaded completely.
+    // 					deliverNotification(1, 'Image downloaded and saved to gallery correctly 😏');
+    // 				},
+    // 				err => {
+    // 					// Deliver a local notification when the image download fail.
+    // 					deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
+    // 				}
+    // 			);
+    // 		});
+    // 	}
     ImageViewerComponent.decorators = [
         { type: Component, args: [{
                     selector: 'image-viewer',
@@ -157,8 +145,6 @@ var ImageViewerComponent = (function (_super) {
     ];
     /** @nocollapse */
     ImageViewerComponent.ctorParameters = function () { return [
-        { type: Base64ToGallery, },
-        { type: LocalNotifications, },
         { type: SocialSharing, },
         { type: GestureController, },
         { type: ElementRef, },
