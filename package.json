@@ -6,7 +6,7 @@
   "typings": "./dist/es2015/ionic-img-viewer.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublish": "node ngc-build.js"
+    "postinstall": "node ngc-build.js"
   },
   "repository": {
     "type": "git",
