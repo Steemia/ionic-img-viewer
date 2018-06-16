@@ -150,7 +150,6 @@ var __extends = (this && this.__extends) || (function () {
                 xhr.send();
             };
             toDataURL(this.rawUrl, function (dataUrl) {
-                alert(dataUrl);
                 // Declare the options of B64 TO GALLERY.
                 var options = { prefix: '_img', mediaScanner: true };
                 // Save the image to the gallery/image roll.
@@ -159,11 +158,9 @@ var __extends = (this && this.__extends) || (function () {
                     // Deliver a local notification when the image is downloaded completely.
                     deliverNotification(1, 'Image downloaded and saved to gallery correctly 😏');
                 }, function (err) {
-                    alert(err);
                     // Deliver a local notification when the image download fail.
                     deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
                 });
-                console.log('RESULT:', dataUrl);
             });
             // const fileTransfer: FileTransferObject = this.transfer.create();
             // fileTransfer.download(encodeURI(this.rawUrl), this.file.dataDirectory + makeid() + '.jpg').then((entry) => {
