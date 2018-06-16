@@ -28,6 +28,8 @@ import { SocialSharing } from '@ionic-native/social-sharing';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
 import { File } from '@ionic-native/file';
 import { LocalNotifications } from '@ionic-native/local-notifications';
+import { Base64 } from '@ionic-native/base64';
+import { Base64ToGallery, Base64ToGalleryOptions } from '@ionic-native/base64-to-gallery';
 
 import { ImageViewerSrcAnimation } from './image-viewer-src-animation';
 import { ImageViewerTransitionGesture } from './image-viewer-transition-gesture';
@@ -77,6 +79,8 @@ export class ImageViewerComponent extends Ion implements OnInit, OnDestroy, Afte
 	private unregisterBackButton: Function;
 
 	constructor(
+		private base64ToGallery: Base64ToGallery,
+		private base64: Base64,
 		private localNotifications: LocalNotifications,
 		private transfer: FileTransfer,
 		private file: File,
@@ -167,17 +171,43 @@ export class ImageViewerComponent extends Ion implements OnInit, OnDestroy, Afte
 			return text;
 		};
 
+		// Function to deliver local notification
+		const deliverNotification = (id: number, message: string) => {
+			// Deliver a local notification when the image download fail.
+			this.localNotifications.schedule({
+				id: id,
+				text: message,
+			});
+		};
+
 		const fileTransfer: FileTransferObject = this.transfer.create();
 
 		fileTransfer.download(encodeURI(this.rawUrl), this.file.dataDirectory + makeid() + '.jpg').then((entry) => {
-			// Deliver a local notification when the image is downloaded completely.
-			this.localNotifications.schedule({
-				id: 1,
-				text: 'Image downloaded correctly 😏',
+			// Encode the path in base64 to save it into the gallery.
+			this.base64.encodeFile(entry.toURL()).then((base64File: string) => {
+
+				// Declare the options of B64 TO GALLERY.
+				const options: Base64ToGalleryOptions = { prefix: '_img', mediaScanner: true };
+
+				// Save the image to the gallery/image roll.
+				this.base64ToGallery.base64ToGallery(base64File, options).then(
+					res => {
+						// Deliver a local notification when the image is downloaded completely.
+						deliverNotification(1, 'Image downloaded and saved to gallery correctly 😏');
+					},
+					err => {
+						// Deliver a local notification when the image download fail.
+						deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
+					}
+				);
+			}, (err) => {
+				// Deliver a local notification when the image download fail.
+				deliverNotification(3, 'The image could not be downloaded. Please try again. 😢');
 			});
 			// console.log('download complete: ' + entry.toURL());
 		}, (error) => {
-			// handle error
+			// Deliver a local notification when the image download fail.
+			deliverNotification(4, 'The image could not be downloaded. Please try again. 😢');
 		});
 
 	}

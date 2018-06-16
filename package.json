@@ -41,6 +41,8 @@
     "@ionic-native/social-sharing": "^4.6.0"
   },
   "dependencies": {
+    "@ionic-native/base64": "^4.7.0",
+    "@ionic-native/base64-to-gallery": "^4.7.0",
     "@ionic-native/core": "^4.7.0",
     "@ionic-native/file": "^4.7.0",
     "@ionic-native/file-transfer": "^4.7.0",
