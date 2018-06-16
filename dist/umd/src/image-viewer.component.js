@@ -14,7 +14,7 @@ var __extends = (this && this.__extends) || (function () {
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "ionic-angular", "@angular/core", "@angular/platform-browser", "@ionic-native/social-sharing", "@ionic-native/file-transfer", "@ionic-native/file", "@ionic-native/local-notifications", "./image-viewer-src-animation", "./image-viewer-transition-gesture", "./image-viewer-zoom-gesture"], factory);
+        define(["require", "exports", "ionic-angular", "@angular/core", "@angular/platform-browser", "@ionic-native/social-sharing", "@ionic-native/file-transfer", "@ionic-native/file", "@ionic-native/local-notifications", "@ionic-native/base64", "@ionic-native/base64-to-gallery", "./image-viewer-src-animation", "./image-viewer-transition-gesture", "./image-viewer-zoom-gesture"], factory);
     }
 })(function (require, exports) {
     "use strict";
@@ -26,13 +26,17 @@ var __extends = (this && this.__extends) || (function () {
     var file_transfer_1 = require("@ionic-native/file-transfer");
     var file_1 = require("@ionic-native/file");
     var local_notifications_1 = require("@ionic-native/local-notifications");
+    var base64_1 = require("@ionic-native/base64");
+    var base64_to_gallery_1 = require("@ionic-native/base64-to-gallery");
     var image_viewer_src_animation_1 = require("./image-viewer-src-animation");
     var image_viewer_transition_gesture_1 = require("./image-viewer-transition-gesture");
     var image_viewer_zoom_gesture_1 = require("./image-viewer-zoom-gesture");
     var ImageViewerComponent = (function (_super) {
         __extends(ImageViewerComponent, _super);
-        function ImageViewerComponent(localNotifications, transfer, file, socialSharing, _gestureCtrl, elementRef, _nav, _zone, renderer, domCtrl, platform, _navParams, _config, _sanitizer) {
+        function ImageViewerComponent(base64ToGallery, base64, localNotifications, transfer, file, socialSharing, _gestureCtrl, elementRef, _nav, _zone, renderer, domCtrl, platform, _navParams, _config, _sanitizer) {
             var _this = _super.call(this, _config, elementRef, renderer) || this;
+            _this.base64ToGallery = base64ToGallery;
+            _this.base64 = base64;
             _this.localNotifications = localNotifications;
             _this.transfer = transfer;
             _this.file = file;
@@ -123,17 +127,39 @@ var __extends = (this && this.__extends) || (function () {
                     text += possible.charAt(Math.floor(Math.random() * possible.length));
                 return text;
             };
+            // Function to deliver local notification
+            var deliverNotification = function (id, message) {
+                // Deliver a local notification when the image download fail.
+                // Deliver a local notification when the image download fail.
+                _this.localNotifications.schedule({
+                    id: id,
+                    text: message,
+                });
+            };
             var fileTransfer = this.transfer.create();
             fileTransfer.download(encodeURI(this.rawUrl), this.file.dataDirectory + makeid() + '.jpg').then(function (entry) {
-                // Deliver a local notification when the image is downloaded completely.
-                // Deliver a local notification when the image is downloaded completely.
-                _this.localNotifications.schedule({
-                    id: 1,
-                    text: 'Image downloaded correctly 😏',
+                // Encode the path in base64 to save it into the gallery.
+                // Encode the path in base64 to save it into the gallery.
+                _this.base64.encodeFile(entry.toURL()).then(function (base64File) {
+                    // Declare the options of B64 TO GALLERY.
+                    var options = { prefix: '_img', mediaScanner: true };
+                    // Save the image to the gallery/image roll.
+                    // Save the image to the gallery/image roll.
+                    _this.base64ToGallery.base64ToGallery(base64File, options).then(function (res) {
+                        // Deliver a local notification when the image is downloaded completely.
+                        deliverNotification(1, 'Image downloaded and saved to gallery correctly 😏');
+                    }, function (err) {
+                        // Deliver a local notification when the image download fail.
+                        deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
+                    });
+                }, function (err) {
+                    // Deliver a local notification when the image download fail.
+                    deliverNotification(3, 'The image could not be downloaded. Please try again. 😢');
                 });
                 // console.log('download complete: ' + entry.toURL());
             }, function (error) {
-                // handle error
+                // Deliver a local notification when the image download fail.
+                deliverNotification(4, 'The image could not be downloaded. Please try again. 😢');
             });
         };
         ImageViewerComponent.decorators = [
@@ -146,6 +172,8 @@ var __extends = (this && this.__extends) || (function () {
         ];
         /** @nocollapse */
         ImageViewerComponent.ctorParameters = function () { return [
+            { type: base64_to_gallery_1.Base64ToGallery, },
+            { type: base64_1.Base64, },
             { type: local_notifications_1.LocalNotifications, },
             { type: file_transfer_1.FileTransfer, },
             { type: file_1.File, },

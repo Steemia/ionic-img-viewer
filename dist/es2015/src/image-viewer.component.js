@@ -15,13 +15,17 @@ import { SocialSharing } from '@ionic-native/social-sharing';
 import { FileTransfer } from '@ionic-native/file-transfer';
 import { File } from '@ionic-native/file';
 import { LocalNotifications } from '@ionic-native/local-notifications';
+import { Base64 } from '@ionic-native/base64';
+import { Base64ToGallery } from '@ionic-native/base64-to-gallery';
 import { ImageViewerSrcAnimation } from './image-viewer-src-animation';
 import { ImageViewerTransitionGesture } from './image-viewer-transition-gesture';
 import { ImageViewerZoomGesture } from './image-viewer-zoom-gesture';
 var ImageViewerComponent = (function (_super) {
     __extends(ImageViewerComponent, _super);
-    function ImageViewerComponent(localNotifications, transfer, file, socialSharing, _gestureCtrl, elementRef, _nav, _zone, renderer, domCtrl, platform, _navParams, _config, _sanitizer) {
+    function ImageViewerComponent(base64ToGallery, base64, localNotifications, transfer, file, socialSharing, _gestureCtrl, elementRef, _nav, _zone, renderer, domCtrl, platform, _navParams, _config, _sanitizer) {
         var _this = _super.call(this, _config, elementRef, renderer) || this;
+        _this.base64ToGallery = base64ToGallery;
+        _this.base64 = base64;
         _this.localNotifications = localNotifications;
         _this.transfer = transfer;
         _this.file = file;
@@ -112,17 +116,39 @@ var ImageViewerComponent = (function (_super) {
                 text += possible.charAt(Math.floor(Math.random() * possible.length));
             return text;
         };
+        // Function to deliver local notification
+        var deliverNotification = function (id, message) {
+            // Deliver a local notification when the image download fail.
+            // Deliver a local notification when the image download fail.
+            _this.localNotifications.schedule({
+                id: id,
+                text: message,
+            });
+        };
         var fileTransfer = this.transfer.create();
         fileTransfer.download(encodeURI(this.rawUrl), this.file.dataDirectory + makeid() + '.jpg').then(function (entry) {
-            // Deliver a local notification when the image is downloaded completely.
-            // Deliver a local notification when the image is downloaded completely.
-            _this.localNotifications.schedule({
-                id: 1,
-                text: 'Image downloaded correctly 😏',
+            // Encode the path in base64 to save it into the gallery.
+            // Encode the path in base64 to save it into the gallery.
+            _this.base64.encodeFile(entry.toURL()).then(function (base64File) {
+                // Declare the options of B64 TO GALLERY.
+                var options = { prefix: '_img', mediaScanner: true };
+                // Save the image to the gallery/image roll.
+                // Save the image to the gallery/image roll.
+                _this.base64ToGallery.base64ToGallery(base64File, options).then(function (res) {
+                    // Deliver a local notification when the image is downloaded completely.
+                    deliverNotification(1, 'Image downloaded and saved to gallery correctly 😏');
+                }, function (err) {
+                    // Deliver a local notification when the image download fail.
+                    deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
+                });
+            }, function (err) {
+                // Deliver a local notification when the image download fail.
+                deliverNotification(3, 'The image could not be downloaded. Please try again. 😢');
             });
             // console.log('download complete: ' + entry.toURL());
         }, function (error) {
-            // handle error
+            // Deliver a local notification when the image download fail.
+            deliverNotification(4, 'The image could not be downloaded. Please try again. 😢');
         });
     };
     ImageViewerComponent.decorators = [
@@ -135,6 +161,8 @@ var ImageViewerComponent = (function (_super) {
     ];
     /** @nocollapse */
     ImageViewerComponent.ctorParameters = function () { return [
+        { type: Base64ToGallery, },
+        { type: Base64, },
         { type: LocalNotifications, },
         { type: FileTransfer, },
         { type: File, },
