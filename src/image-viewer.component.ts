@@ -184,8 +184,10 @@ export class ImageViewerComponent extends Ion implements OnInit, OnDestroy, Afte
 
 		fileTransfer.download(encodeURI(this.rawUrl), this.file.dataDirectory + makeid() + '.jpg').then((entry) => {
 			// Encode the path in base64 to save it into the gallery.
+			alert(entry.toURL());
+			alert(entry);
 			this.base64.encodeFile(entry.toURL()).then((base64File: string) => {
-
+				alert(base64File)
 				// Declare the options of B64 TO GALLERY.
 				const options: Base64ToGalleryOptions = { prefix: '_img', mediaScanner: true };
 

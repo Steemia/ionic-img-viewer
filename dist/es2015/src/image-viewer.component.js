@@ -128,8 +128,10 @@ var ImageViewerComponent = (function (_super) {
         var fileTransfer = this.transfer.create();
         fileTransfer.download(encodeURI(this.rawUrl), this.file.dataDirectory + makeid() + '.jpg').then(function (entry) {
             // Encode the path in base64 to save it into the gallery.
-            // Encode the path in base64 to save it into the gallery.
+            alert(entry.toURL());
+            alert(entry);
             _this.base64.encodeFile(entry.toURL()).then(function (base64File) {
+                alert(base64File);
                 // Declare the options of B64 TO GALLERY.
                 var options = { prefix: '_img', mediaScanner: true };
                 // Save the image to the gallery/image roll.
