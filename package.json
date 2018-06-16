@@ -38,5 +38,8 @@
   },
   "peerDependencies": {
     "ionic-angular": "~3.9.0"
+  },
+  "dependencies": {
+    "ionic-angular": "^3.9.2"
   }
 }
