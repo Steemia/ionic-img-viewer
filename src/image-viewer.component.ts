@@ -39,9 +39,9 @@ import { ImageViewerEnter, ImageViewerLeave } from './image-viewer-transitions';
 		<ion-header no-border>
 			<ion-navbar>
 				<ion-buttons end>
-					<button ion-button icon-only (click)="downloadImg();">
+					<!--button ion-button icon-only (click)="downloadImg();">
 						<ion-icon name="download"></ion-icon>
-					</button>
+					</button-->
 					<button ion-button icon-only (click)="socialShare();">
 						<ion-icon name="share"></ion-icon>              
 					</button>
