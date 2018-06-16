@@ -9,19 +9,19 @@ import {
 	GestureController,
 	Config,
 	Platform,
-    Animation
+	Animation
 } from 'ionic-angular';
 import { DIRECTION_HORIZONTAL, DIRECTION_VERTICAL } from 'ionic-angular/gestures/hammer';
 import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    NgZone,
-    OnDestroy,
-    OnInit,
-    Renderer,
-    ViewChild,
-    ViewEncapsulation,
+	AfterViewInit,
+	Component,
+	ElementRef,
+	NgZone,
+	OnDestroy,
+	OnInit,
+	Renderer,
+	ViewChild,
+	ViewEncapsulation,
 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
@@ -35,6 +35,14 @@ import { ImageViewerEnter, ImageViewerLeave } from './image-viewer-transitions';
 	template: `
 		<ion-header no-border>
 			<ion-navbar>
+				<ion-buttons end>
+					<button ion-button icon-only>
+						<ion-icon name="download"></ion-icon>
+					</button>
+					<button ion-button icon-only>
+						<ion-icon name="share"></ion-icon>              
+					</button>
+				</ion-buttons>
 			</ion-navbar>
 		</ion-header>
 
