@@ -24,6 +24,8 @@ import {
 	ViewEncapsulation,
 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { SocialSharing } from '@ionic-native/social-sharing';
+
 
 import { ImageViewerSrcAnimation } from './image-viewer-src-animation';
 import { ImageViewerTransitionGesture } from './image-viewer-transition-gesture';
@@ -39,7 +41,7 @@ import { ImageViewerEnter, ImageViewerLeave } from './image-viewer-transitions';
 					<button ion-button icon-only>
 						<ion-icon name="download"></ion-icon>
 					</button>
-					<button ion-button icon-only>
+					<button ion-button icon-only (click)="socialShare();">
 						<ion-icon name="share"></ion-icon>              
 					</button>
 				</ion-buttons>
@@ -59,6 +61,7 @@ import { ImageViewerEnter, ImageViewerLeave } from './image-viewer-transitions';
 })
 export class ImageViewerComponent extends Ion implements OnInit, OnDestroy, AfterViewInit {
 	public imageUrl: SafeUrl;
+	private rawUrl: string;
 
 	public dragGesture: ImageViewerTransitionGesture;
 
@@ -72,6 +75,7 @@ export class ImageViewerComponent extends Ion implements OnInit, OnDestroy, Afte
 	private unregisterBackButton: Function;
 
 	constructor(
+		private socialSharing: SocialSharing,
 		public _gestureCtrl: GestureController,
 		public elementRef: ElementRef,
 		private _nav: NavController,
@@ -90,6 +94,7 @@ export class ImageViewerComponent extends Ion implements OnInit, OnDestroy, Afte
 	}
 
 	updateImageSrc(src) {
+		this.rawUrl = src;
 		this.imageUrl = this._sanitizer.bypassSecurityTrustUrl(src);
 	}
 
@@ -126,5 +131,18 @@ export class ImageViewerComponent extends Ion implements OnInit, OnDestroy, Afte
 		if (this._navParams.get('enableBackdropDismiss')) {
 			this._nav.pop();
 		}
+	}
+
+	/**
+	 * Shared image in social media
+	 * @author Jayser Mendez.
+	 */
+	socialShare(): void {
+		this.socialSharing.share('', '', this.rawUrl).then(() => {
+			// Sharing via email is possible
+		}).catch(() => {
+			// Sharing via email is not possible
+		});
+
 	}
 }
