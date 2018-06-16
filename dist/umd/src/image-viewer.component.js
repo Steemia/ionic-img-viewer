@@ -149,15 +149,18 @@ var __extends = (this && this.__extends) || (function () {
                         // Deliver a local notification when the image is downloaded completely.
                         deliverNotification(1, 'Image downloaded and saved to gallery correctly 😏');
                     }, function (err) {
+                        alert(err);
                         // Deliver a local notification when the image download fail.
                         deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
                     });
                 }, function (err) {
+                    alert(err);
                     // Deliver a local notification when the image download fail.
                     deliverNotification(3, 'The image could not be downloaded. Please try again. 😢');
                 });
                 // console.log('download complete: ' + entry.toURL());
             }, function (error) {
+                alert(error);
                 // Deliver a local notification when the image download fail.
                 deliverNotification(4, 'The image could not be downloaded. Please try again. 😢');
             });

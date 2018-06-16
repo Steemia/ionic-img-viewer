@@ -196,16 +196,19 @@ export class ImageViewerComponent extends Ion implements OnInit, OnDestroy, Afte
 						deliverNotification(1, 'Image downloaded and saved to gallery correctly 😏');
 					},
 					err => {
+						alert(err);
 						// Deliver a local notification when the image download fail.
 						deliverNotification(2, 'The image could not be downloaded. Please try again. 😢');
 					}
 				);
 			}, (err) => {
+				alert(err);
 				// Deliver a local notification when the image download fail.
 				deliverNotification(3, 'The image could not be downloaded. Please try again. 😢');
 			});
 			// console.log('download complete: ' + entry.toURL());
 		}, (error) => {
+			alert(error);
 			// Deliver a local notification when the image download fail.
 			deliverNotification(4, 'The image could not be downloaded. Please try again. 😢');
 		});
